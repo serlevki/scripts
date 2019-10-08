@@ -1,0 +1,26 @@
+yum update
+yum -y install mc net-tools bind-utils
+#disable SElinux
+SELINUX=disabled /etc/sysconfig/selinux
+setenforce 0
+#network
+yum install network-scripts
+/etc/sysconfig/network-scripts/ifcfg-eth0
+#iptables
+iptables -L -v -n
+systemctl stop firewalld
+systemctl disable firewalld
+yum install iptables-services
+systemctl enable iptables
+# SSH
+/etc/ssh/sshd_config
+PORT, ROOTLOGIN, DNS
+#Time
+timedatectl set-timezone Europe/Kiev
+#Repositories
+yum install epel-release
+rpm -Uhv http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+#Turn off flood in /var/log/messages
+cd /etc/rsyslog.d && mcedit ignore-systemd-session-slice.conf
+if $programname == "systemd" and ($msg contains "Starting Session" or $msg contains "Started Session" or $msg contains "Created slice" or $msg contains "Starting user-" or $msg contains "Starting User Slice of" or $msg contains "Removed session" or $msg contains "Removed slice User Slice of" or $msg contains "Stopping User Slice of") then stop
+systemctl restart rsyslog
